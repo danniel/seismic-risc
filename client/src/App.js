@@ -6,6 +6,7 @@ import { useGlobalContext } from './context';
 
 import Home from './containers/home';
 import Guide from './containers/guide';
+import About from './containers/About';
 import Blog from './containers/blog';
 import Footer from './components/Footer';
 import Terms from './containers/Terms';
@@ -29,6 +30,9 @@ const App = () => {
           </Route>
           <Route path="/ghid">
             <Guide />
+          </Route>
+          <Route path="/despre">
+            <About />
           </Route>
           <Route path="/blog">
             <Blog />

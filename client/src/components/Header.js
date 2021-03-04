@@ -60,7 +60,7 @@ export default () => {
       <ul className={`App-menu ${showMenu ? 'show' : ''}`}>
         <li>
           <NavLink to="/" exact activeClassName="active">
-            <Trans>About</Trans>
+            <Trans>Clădiri cu risc</Trans>
           </NavLink>
         </li>
         <li>
@@ -69,8 +69,8 @@ export default () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/contact" activeClassName="active">
-            <Trans>Contact us</Trans>
+          <NavLink to="/despre" activeClassName="active">
+            <Trans>Despre</Trans>
           </NavLink>
         </li>
       </ul>
