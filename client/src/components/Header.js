@@ -3,7 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 import { Button, Dropdown, Layout, Menu } from 'antd';
 import { DownOutlined, GlobalOutlined, MenuOutlined } from '@ant-design/icons';
 import { Trans } from '@lingui/macro';
-import logo from '../logo.svg';
+import logo from '../logo.png';
 
 import { useGlobalContext } from '../context';
 

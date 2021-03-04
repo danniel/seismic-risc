@@ -41,6 +41,9 @@ const HereMapInteractive = (props) => {
     /* eslint-disable-next-line no-unused-vars, new-cap */
     const ui = new H.ui.UI.createDefault(map, layer);
 
+    // TODO: scroll wheel bug
+    // behavior.disable(H.mapevents.Behavior.Feature.WHEEL_ZOOM);
+
     setCurrentMap(map);
     onHereMapLoaded(map);
 
@@ -54,7 +57,7 @@ const HereMapInteractive = (props) => {
         <div
           className="map-container"
           ref={mapRef}
-          style={{ width: '100%', height: '400px', background: 'grey' }}
+          style={{ width: '100%', height: '75vh', background: 'grey' }}
         >
           <BuildingDetailsFragment
             visible={isDrawerVisible}
