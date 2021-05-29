@@ -19,6 +19,12 @@ class StatisticAdmin(admin.ModelAdmin):
         return False
 
 
+class BuildingDraftInline(admin.StackedInline):
+    model = models.BuildingDraft
+    ordering = ("-general_id",)
+    extra = 0
+
+
 @admin.register(models.Building)
 class BuildingAdmin(admin.ModelAdmin):
     list_filter = ("status", "risk_category", "county", "locality")
@@ -36,6 +42,7 @@ class BuildingAdmin(admin.ModelAdmin):
         "make_accepted",
         "make_rejected",
     )
+    inlines = [BuildingDraftInline]
 
     def make_pending(self, request, queryset):
         self._perform_status_change(request, queryset, "0")

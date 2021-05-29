@@ -32,12 +32,39 @@ class SeismicCategoryChoice(Enum):
         return [(i.name, i.value) for i in cls]
 
 
-class ApprovedBuilding(models.Manager):
+class ApprovedStatus(models.Manager):
+    """Manager for filtering by accepted status"""
+
     def get_queryset(self):
         return super().get_queryset().filter(status=Building.ACCEPTED)
 
 
-class Building(models.Model):
+class PendingStatus(models.Manager):
+    """Manager for filtering by pending status"""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status=Building.PENDING)
+
+
+class RejectedStatus(models.Manager):
+    """Manager for filtering by rejected status"""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status=Building.REJECTED)
+
+
+class DraftsForNewBuildings(models.Manager):
+    """Manager for filtering Drafts not assigned to a Building yet"""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(building__isnull=True)
+
+
+class BuildingData(models.Model):
+    """
+    Abstract model which defines the data fields for a building
+    """
+
     PENDING = 0
     ACCEPTED = 1
     REJECTED = -1
@@ -49,7 +76,6 @@ class Building(models.Model):
     ]
 
     general_id = models.AutoField(_("general id"), primary_key=True)
-
     risk_category = models.CharField(
         _("risk category"),
         max_length=3,
@@ -77,8 +103,6 @@ class Building(models.Model):
 
     cadastre_number = models.IntegerField(_("cadastre number"), null=True)
     land_registry_number = models.CharField(_("land registry number"), max_length=50, null=True)
-    administration_update = models.DateField(_("administration update"), null=True, blank=True)
-    admin_update = models.DateField(_("admin update"), null=True, blank=True)
 
     status = models.SmallIntegerField(
         _("status"),
@@ -86,15 +110,45 @@ class Building(models.Model):
         choices=BUILDING_STATUS_CHOICES,
         db_index=True,
     )
-
     created_on = models.DateTimeField(_("created on"), default=timezone.now, blank=True)
 
     objects = models.Manager()
-    approved = ApprovedBuilding()
+    approved = ApprovedStatus()
+    pending = PendingStatus()
+    rejected = RejectedStatus()
+
+    class Meta:
+        abstract = True
+
+
+class Building(BuildingData):
+    """
+    Current data about a building
+    """
+
+    administration_update = models.DateField(_("administration update"), null=True, blank=True)
+    admin_update = models.DateField(_("admin update"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("building")
         verbose_name_plural = _("buildings")
+
+    def __str__(self):
+        return self.address
+
+
+class BuildingDraft(BuildingData):
+    """
+    New data suggested for a building
+    """
+
+    building = models.ForeignKey(Building, null=True, on_delete=models.CASCADE)
+
+    for_new_buildings = DraftsForNewBuildings()
+
+    class Meta:
+        verbose_name = _("building draft")
+        verbose_name_plural = _("building drafts")
 
     def __str__(self):
         return self.address

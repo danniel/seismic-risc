@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Building, Statistic
+from .models import Building, BuildingDraft, Statistic
 
 
 class BuildingSerializer(serializers.ModelSerializer):
@@ -23,9 +23,42 @@ class BuildingSerializer(serializers.ModelSerializer):
         )
 
 
+class BuildingDraftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BuildingDraft
+        fields = (
+            "risk_category",
+            "examination_year",
+            "certified_expert",
+            "lat",
+            "lng",
+            "address",
+            "street_number",
+            "locality",
+            "county",
+            "year_built",
+            "height_regime",
+        )
+
+
 class PublicBuildingCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Building
+        fields = (
+            "street_number",
+            "address",
+            "county",
+            "locality",
+            "lat",
+            "lng",
+            "height_regime",
+            "risk_category",
+        )
+
+
+class PublicBuildingDraftCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BuildingDraft
         fields = (
             "street_number",
             "address",

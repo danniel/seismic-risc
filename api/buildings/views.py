@@ -12,13 +12,16 @@ from rest_framework.response import Response
 
 from .serializers import (
     BuildingSerializer,
+    BuildingDraftSerializer,
+    PublicBuildingDraftCreateSerializer,
     PublicBuildingCreateSerializer,
+    PublicBuildingDraftCreateSerializer,
     BuildingListSerializer,
     BuildingSearchSerializer,
     SearchQuerySerializer,
     StatisticSerializer,
 )
-from .models import Building, Statistic
+from .models import Building, BuildingDraft, Statistic
 
 
 class BuildingViewSet(viewsets.ModelViewSet):
@@ -93,6 +96,42 @@ class BuildingViewSet(viewsets.ModelViewSet):
 
         result_serializer = BuildingSearchSerializer(buildings, many=True)
         return Response(result_serializer.data)
+
+
+class BuildingDraftViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows building drafts to be viewed or updated.
+    """
+
+    lookup_field = "general_id"
+
+    def get_queryset(self):
+        return BuildingDraft.objects.all().order_by("general_id")
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return BuildingListSerializer
+        elif self.action == "public_create":
+            return PublicBuildingDraftCreateSerializer
+        return BuildingDraftSerializer
+
+    @action(
+        detail=False,
+        methods=["post"],
+        permission_classes=[permissions.AllowAny],
+    )
+    def public_create(self, request):
+        """
+        Special action to allow the public to create a building draft, while
+        keeping the default create action available for staff only
+        """
+        serializer = PublicBuildingDraftCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
